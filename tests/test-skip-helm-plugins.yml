@@ -1,0 +1,29 @@
+name: Test skip helm plugins installation
+on:
+  workflow_dispatch:
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+      - id: setup
+        uses: .
+        with:
+          install-helm-plugins: "no"
+      - name: Assert helmfile is installed
+        run: |
+          which helmfile || { echo "FAIL: helmfile not found on PATH"; exit 1; }
+          helmfile --version
+          echo "PASS: helmfile is installed"
+      - name: Assert helm is installed
+        run: |
+          which helm || { echo "FAIL: helm not found on PATH"; exit 1; }
+          helm version --short
+          echo "PASS: helm is installed"
+      - name: Assert helm-diff plugin is NOT installed
+        run: |
+          if helm plugin list 2>/dev/null | grep -qi diff; then
+            echo "FAIL: helm-diff plugin should not be installed"
+            exit 1
+          fi
+          echo "PASS: helm-diff plugin is not installed (as expected)"

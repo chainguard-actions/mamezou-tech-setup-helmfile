@@ -1,0 +1,29 @@
+name: Test basic usage (all defaults)
+on:
+  workflow_dispatch:
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+      - id: setup
+        uses: .
+      - name: Assert helmfile is installed
+        run: |
+          which helmfile || { echo "FAIL: helmfile not found on PATH"; exit 1; }
+          helmfile --version
+          echo "PASS: helmfile is installed"
+      - name: Assert helm is installed
+        run: |
+          which helm || { echo "FAIL: helm not found on PATH"; exit 1; }
+          helm version --short
+          echo "PASS: helm is installed"
+      - name: Assert kubectl is installed
+        run: |
+          which kubectl || { echo "FAIL: kubectl not found on PATH"; exit 1; }
+          kubectl version --client
+          echo "PASS: kubectl is installed"
+      - name: Assert helm-diff plugin is installed
+        run: |
+          helm plugin list | grep -i diff || { echo "FAIL: helm-diff plugin not found"; exit 1; }
+          echo "PASS: helm-diff plugin is installed"

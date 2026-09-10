@@ -1,0 +1,39 @@
+{
+  "name": "setup-helmfile",
+  "version": "2.2.0",
+  "description": "Action for setup helmfile",
+  "main": "index.js",
+  "scripts": {
+    "lint": "eslint src/** --ignore-pattern **/*.test.js",
+    "package": "ncc build src/index.js -o dist",
+    "test": "jest"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/mamezou-tech/setup-helmfile.git"
+  },
+  "keywords": [
+    "GitHub",
+    "Actions",
+    "helmfile"
+  ],
+  "author": "mamezou-tech",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/mamezou-tech/setup-helmfile/issues"
+  },
+  "homepage": "https://github.com/mamezou-tech/setup-helmfile#readme",
+  "dependencies": {
+    "@actions/core": "^2.0.2",
+    "@actions/exec": "^2.0.0",
+    "@actions/github": "^7.0.0",
+    "@actions/io": "^2.0.0",
+    "@actions/tool-cache": "^3.0.0",
+    "compare-versions": "^6.1.1"
+  },
+  "devDependencies": {
+    "@vercel/ncc": "^0.38.4",
+    "eslint": "^9.39.2",
+    "jest": "^30.2.0"
+  }
+}

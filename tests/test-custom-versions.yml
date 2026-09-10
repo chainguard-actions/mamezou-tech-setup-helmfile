@@ -1,0 +1,29 @@
+name: Test custom tool versions
+on:
+  workflow_dispatch:
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+      - id: setup
+        uses: .
+        with:
+          helmfile-version: "v1.1.0"
+          helm-version: "v3.17.0"
+          install-kubectl: "no"
+          install-helm-plugins: "no"
+      - name: Assert helmfile version matches requested
+        run: |
+          which helmfile || { echo "FAIL: helmfile not found on PATH"; exit 1; }
+          HELMFILE_VER=$(helmfile --version 2>&1)
+          echo "helmfile version output: $HELMFILE_VER"
+          echo "$HELMFILE_VER" | grep -q "1.1.0" || { echo "FAIL: expected helmfile v1.1.0 but got: $HELMFILE_VER"; exit 1; }
+          echo "PASS: helmfile version is correct"
+      - name: Assert helm version matches requested
+        run: |
+          which helm || { echo "FAIL: helm not found on PATH"; exit 1; }
+          HELM_VER=$(helm version --short 2>&1)
+          echo "helm version output: $HELM_VER"
+          echo "$HELM_VER" | grep -q "3.17.0" || { echo "FAIL: expected helm v3.17.0 but got: $HELM_VER"; exit 1; }
+          echo "PASS: helm version is correct"

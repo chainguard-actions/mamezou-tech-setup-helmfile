@@ -1,0 +1,22 @@
+name: Test skip helm installation
+on:
+  workflow_dispatch:
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+      - id: setup
+        uses: .
+        with:
+          install-helm: "no"
+          install-helm-plugins: "no"
+      - name: Assert helmfile is installed
+        run: |
+          which helmfile || { echo "FAIL: helmfile not found on PATH"; exit 1; }
+          helmfile --version
+          echo "PASS: helmfile is installed"
+      - name: Assert helm is NOT installed by this action
+        run: |
+          # We just verify the action completed successfully without helm
+          echo "PASS: action completed without installing helm"

@@ -1,0 +1,37 @@
+name: Test additional-helm-plugins input
+on:
+  workflow_dispatch:
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+      - id: action
+        uses: .
+        with:
+          install-kubectl: "no"
+          install-helm: "yes"
+          install-helm-plugins: "yes"
+          additional-helm-plugins: "https://github.com/jkroepke/helm-secrets --version v4.6.2"
+      - name: Assert helmfile is installed
+        run: |
+          if ! command -v helmfile &>/dev/null; then
+            echo "FAIL: helmfile not found in PATH"
+            exit 1
+          fi
+          echo "PASS: helmfile found at $(command -v helmfile)"
+      - name: Assert helm is installed
+        run: |
+          if ! command -v helm &>/dev/null; then
+            echo "FAIL: helm not found in PATH"
+            exit 1
+          fi
+          echo "PASS: helm found at $(command -v helm)"
+      - name: Assert additional helm plugin is installed
+        run: |
+          if ! helm plugin list | grep -q "secrets"; then
+            echo "FAIL: helm-secrets plugin not found"
+            helm plugin list
+            exit 1
+          fi
+          echo "PASS: helm-secrets plugin is installed"
