@@ -12,26 +12,29 @@ jobs:
           install-kubectl: "no"
           install-helm: "yes"
           install-helm-plugins: "yes"
-          additional-helm-plugins: "https://github.com/jkroepke/helm-secrets --version v4.6.2"
+          helmfile-version: "v1.2.3"
+          additional-helm-plugins: "https://github.com/helm/helm-mapkubeapis"
       - name: Assert helmfile is installed
         run: |
           if ! command -v helmfile &>/dev/null; then
             echo "FAIL: helmfile not found in PATH"
             exit 1
           fi
-          echo "PASS: helmfile found at $(command -v helmfile)"
+          echo "PASS: helmfile is installed: $(helmfile --version)"
       - name: Assert helm is installed
         run: |
           if ! command -v helm &>/dev/null; then
             echo "FAIL: helm not found in PATH"
             exit 1
           fi
-          echo "PASS: helm found at $(command -v helm)"
+          echo "PASS: helm is installed: $(helm version --short)"
       - name: Assert additional helm plugin is installed
         run: |
-          if ! helm plugin list | grep -q "secrets"; then
-            echo "FAIL: helm-secrets plugin not found"
-            helm plugin list
+          PLUGINS="$(helm plugin list 2>/dev/null || true)"
+          echo "Installed plugins: $PLUGINS"
+          if echo "$PLUGINS" | grep -qi "mapkubeapis"; then
+            echo "PASS: mapkubeapis plugin is installed"
+          else
+            echo "FAIL: expected mapkubeapis plugin to be installed"
             exit 1
           fi
-          echo "PASS: helm-secrets plugin is installed"
