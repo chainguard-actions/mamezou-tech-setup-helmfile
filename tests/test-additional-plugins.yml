@@ -1,0 +1,29 @@
+name: Test additional helm plugins
+on:
+  workflow_dispatch:
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+      - id: action
+        uses: .
+        with:
+          install-kubectl: "no"
+          install-helm-plugins: "no"
+          helmfile-arch: amd64
+          additional-helm-plugins: "https://github.com/jkroepke/helm-secrets --version v4.6.0 ,  https://github.com/databus23/helm-diff --version v3.14.1"
+      - name: Assert additional plugins installed
+        run: |
+          export PATH="$HOME/bin:$PATH"
+          PLUGINS="$(helm plugin list 2>&1)"
+          echo "plugins:"
+          echo "$PLUGINS"
+          echo "$PLUGINS" | grep -qE '^secrets[[:space:]]' || { echo "FAIL: secrets plugin not installed"; exit 1; }
+          echo "$PLUGINS" | grep -qE '^diff[[:space:]]' || { echo "FAIL: diff plugin not installed"; exit 1; }
+          if echo "$PLUGINS" | grep -qE '^s3[[:space:]]'; then
+            echo "FAIL: s3 plugin should not be installed when install-helm-plugins=no"
+            exit 1
+          fi
+          [ -x "$HOME/bin/helmfile" ] || { echo "FAIL: helmfile not installed"; exit 1; }
+          echo "PASS"

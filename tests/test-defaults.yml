@@ -1,0 +1,35 @@
+name: Test default installation
+on:
+  workflow_dispatch:
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+      - id: action
+        uses: .
+      - name: Assert helmfile, helm and kubectl installed
+        run: |
+          set -u
+          for bin in helmfile helm kubectl; do
+            if [ ! -x "$HOME/bin/$bin" ]; then
+              echo "FAIL: $HOME/bin/$bin missing or not executable"
+              ls -la "$HOME/bin" || true
+              exit 1
+            fi
+          done
+          echo "PATH: $PATH"
+          if [ "$(command -v helmfile)" != "$HOME/bin/helmfile" ]; then
+            echo "FAIL: helmfile not resolved from ~/bin: $(command -v helmfile)"
+            exit 1
+          fi
+          OUT="$(helmfile --version 2>&1 || helmfile version 2>&1 || true)"
+          echo "helmfile: $OUT"
+          echo "$OUT" | grep -q "1.2.3" || { echo "FAIL: expected helmfile 1.2.3"; exit 1; }
+          HV="$(helm version --short 2>&1)"
+          echo "helm: $HV"
+          echo "$HV" | grep -q "v3.19.4" || { echo "FAIL: expected helm v3.19.4"; exit 1; }
+          KV="$(kubectl version --client 2>&1 || true)"
+          echo "kubectl: $KV"
+          echo "$KV" | grep -q "1.34" || { echo "FAIL: expected kubectl 1.34"; exit 1; }
+          echo "PASS"

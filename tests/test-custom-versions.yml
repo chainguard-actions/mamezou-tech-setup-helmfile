@@ -1,0 +1,29 @@
+name: Test custom helm and helmfile versions
+on:
+  workflow_dispatch:
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+      - id: action
+        uses: .
+        with:
+          install-kubectl: "no"
+          install-helm-plugins: "no"
+          helm-version: v3.14.0
+          helmfile-version: v0.162.0
+          helmfile-arch: amd64
+      - name: Assert custom versions installed
+        run: |
+          OUT="$("$HOME/bin/helmfile" --version 2>&1 || "$HOME/bin/helmfile" version 2>&1 || true)"
+          echo "helmfile: $OUT"
+          echo "$OUT" | grep -q "0.162.0" || { echo "FAIL: expected helmfile 0.162.0"; exit 1; }
+          HV="$("$HOME/bin/helm" version --short 2>&1)"
+          echo "helm: $HV"
+          echo "$HV" | grep -q "v3.14.0" || { echo "FAIL: expected helm v3.14.0"; exit 1; }
+          if [ -e "$HOME/bin/kubectl" ]; then
+            echo "FAIL: kubectl should not be installed"
+            exit 1
+          fi
+          echo "PASS"

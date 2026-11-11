@@ -1,0 +1,30 @@
+name: Test helmfile only installation
+on:
+  workflow_dispatch:
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+      - id: action
+        uses: .
+        with:
+          install-kubectl: "no"
+          install-helm: "no"
+          install-helm-plugins: "no"
+      - name: Assert only helmfile installed
+        run: |
+          if [ ! -x "$HOME/bin/helmfile" ]; then
+            echo "FAIL: helmfile not installed"
+            exit 1
+          fi
+          for bin in helm kubectl; do
+            if [ -e "$HOME/bin/$bin" ]; then
+              echo "FAIL: $bin should not be installed in ~/bin"
+              exit 1
+            fi
+          done
+          OUT="$("$HOME/bin/helmfile" --version 2>&1 || "$HOME/bin/helmfile" version 2>&1 || true)"
+          echo "helmfile: $OUT"
+          echo "$OUT" | grep -q "1.2.3" || { echo "FAIL: expected helmfile 1.2.3"; exit 1; }
+          echo "PASS"

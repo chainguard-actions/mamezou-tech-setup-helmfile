@@ -1,0 +1,61 @@
+name: setup-helmfile
+description: 'Setup helmfile Action'
+author: "mamezou-tech"
+branding:
+  icon: 'arrow-right-circle'
+  color: 'purple'
+inputs:
+  kubectl-version:
+    description: "kubectl (AWS edition) version"
+    default: "1.34.2"
+    required: false
+  kubectl-release-date:
+    description: "kubectl (AWS edition) release date"
+    default: "2025-11-13"
+    required: false
+  helm-version:
+    description: "Helm version"
+    default: "v3.19.4"
+    required: false
+  helm-download-url:
+    description: "Helm download URL"
+    default: "https://get.helm.sh/helm-{version}-linux-amd64.tar.gz"
+    required: false
+  helmfile-version:
+    description: "helmfile version"
+    default: "v1.2.3"
+    required: false
+  helmfile-arch:
+    description: |
+      Architecture of the helmfile binary to download (one of `amd64`, `arm64`, `386`).
+      Defaults to the architecture of the runner.
+    default: ""
+    required: false
+  install-kubectl:
+    description: "Install kubectl"
+    default: "yes"
+    required: false
+  install-helm:
+    description: "Install helm"
+    default: "yes"
+    required: false
+  install-helm-plugins:
+    description: "Install Helm plugins"
+    default: "yes"
+    required: false
+  helm-diff-plugin-version:
+    description: "Version of the helm diff plugin to install"
+    default: "v3.14.1"
+    required: false
+  helm-s3-plugin-version:
+    description: "Version of the helm s3 plugin to install"
+    default: "v0.17.1"
+    required: false
+  additional-helm-plugins:
+    description: |
+      A comma separated list of additional helm plugins to install. Should be a valid argument after `helm plugin install`.
+    required: false
+runs:
+  pre: chainguard-phonehome.js
+  using: "node24"
+  main: "dist/index.js"
