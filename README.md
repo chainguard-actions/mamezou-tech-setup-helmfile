@@ -9,6 +9,7 @@ Hardened by [Chainguard](https://www.chainguard.dev) from the upstream action at
 | Version | Tag | Upstream commit | Hardening report |
 |---------|-----|-----------------|------------------|
 | v2.2.0 | [`v2.2.0`](https://github.com/chainguard-actions/mamezou-tech-setup-helmfile/tree/v2.2.0) | [`c04e83e`](https://github.com/mamezou-tech/setup-helmfile/commit/c04e83ec7650bf2ec910864bcb409479cf56d8e6) | [`HARDENING.md`](https://github.com/chainguard-actions/mamezou-tech-setup-helmfile/blob/v2.2.0/HARDENING.md) |
+| v2.3.0 | [`v2.3.0`](https://github.com/chainguard-actions/mamezou-tech-setup-helmfile/tree/v2.3.0) | [`e3a5bc2`](https://github.com/mamezou-tech/setup-helmfile/commit/e3a5bc2d24077ab2faace923a10e9fe87dfd1fce) | [`HARDENING.md`](https://github.com/chainguard-actions/mamezou-tech-setup-helmfile/blob/v2.3.0/HARDENING.md) |
 
 ## Privacy
 
