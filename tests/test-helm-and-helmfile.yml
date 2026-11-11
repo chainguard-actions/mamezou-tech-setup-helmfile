@@ -1,0 +1,33 @@
+name: Test helm and helmfile
+on:
+  workflow_dispatch:
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+      - id: action
+        uses: .
+        with:
+          install-kubectl: "no"
+          install-helm: "yes"
+          install-helm-plugins: "no"
+          helm-version: v3.14.4
+          helm-download-url: "https://get.helm.sh/helm-{version}-linux-amd64.tar.gz"
+          helmfile-version: v0.169.1
+      - name: Assert helm installed
+        run: |
+          OUT="$("$HOME/bin/helm" version --short 2>&1)"
+          echo "actual: $OUT"
+          if ! echo "$OUT" | grep -q "v3.14.4"; then
+            echo "FAIL: expected helm v3.14.4"
+            exit 1
+          fi
+          echo "PASS"
+      - name: Assert helm and helmfile on PATH
+        run: |
+          [ "$(command -v helm)" = "$HOME/bin/helm" ] || { echo "FAIL: helm not from ~/bin: $(command -v helm)"; exit 1; }
+          OUT="$(helmfile --version 2>&1)"
+          echo "actual: $OUT"
+          echo "$OUT" | grep -q "0.169.1" || { echo "FAIL: helmfile version"; exit 1; }
+          echo "PASS"

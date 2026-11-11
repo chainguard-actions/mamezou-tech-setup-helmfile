@@ -1,0 +1,26 @@
+name: Test helm plugins
+on:
+  workflow_dispatch:
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+      - id: action
+        uses: .
+        with:
+          install-kubectl: "no"
+          install-helm: "yes"
+          install-helm-plugins: "yes"
+          helm-version: v3.14.4
+          helm-diff-plugin-version: v3.9.4
+          helm-s3-plugin-version: v0.16.0
+          helmfile-version: v0.169.1
+      - name: Assert plugins installed
+        run: |
+          OUT="$(helm plugin list 2>&1)"
+          echo "actual:"
+          echo "$OUT"
+          echo "$OUT" | grep -qi "diff" || { echo "FAIL: diff plugin missing"; exit 1; }
+          echo "$OUT" | grep -qi "s3" || { echo "FAIL: s3 plugin missing"; exit 1; }
+          echo "PASS"

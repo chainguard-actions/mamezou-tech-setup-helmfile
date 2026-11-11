@@ -1,0 +1,28 @@
+name: Test additional helm plugins
+on:
+  workflow_dispatch:
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+      - id: action
+        uses: .
+        with:
+          install-kubectl: "no"
+          install-helm: "yes"
+          install-helm-plugins: "no"
+          helm-version: v3.14.4
+          helmfile-version: v0.169.1
+          additional-helm-plugins: " https://github.com/databus23/helm-diff --version v3.9.4 "
+      - name: Assert additional plugin installed and default s3 plugin not installed
+        run: |
+          OUT="$(helm plugin list 2>&1)"
+          echo "actual:"
+          echo "$OUT"
+          echo "$OUT" | grep -qi "diff" || { echo "FAIL: diff plugin (additional) missing"; exit 1; }
+          if echo "$OUT" | grep -qiE '^s3[[:space:]]'; then
+            echo "FAIL: s3 plugin installed although install-helm-plugins=no"
+            exit 1
+          fi
+          echo "PASS"

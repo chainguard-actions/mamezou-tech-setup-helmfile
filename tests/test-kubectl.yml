@@ -1,0 +1,27 @@
+name: Test kubectl install
+on:
+  workflow_dispatch:
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+      - id: action
+        uses: .
+        with:
+          install-kubectl: "yes"
+          kubectl-version: "1.30.0"
+          kubectl-release-date: "2024-05-12"
+          install-helm: "no"
+          install-helm-plugins: "no"
+          helmfile-version: v0.169.1
+      - name: Assert kubectl installed
+        run: |
+          [ -x "$HOME/bin/kubectl" ] || { echo "FAIL: kubectl missing"; ls -la "$HOME/bin" || true; exit 1; }
+          OUT="$("$HOME/bin/kubectl" version --client 2>&1)"
+          echo "actual: $OUT"
+          if ! echo "$OUT" | grep -q "v1.30"; then
+            echo "FAIL: expected kubectl v1.30"
+            exit 1
+          fi
+          echo "PASS"
