@@ -4,8 +4,13 @@
   "version": "v2.2.0",
   "commit_sha": "c04e83ec7650bf2ec910864bcb409479cf56d8e6",
   "url": "https://github.com/mamezou-tech/setup-helmfile",
-  "policy_sha": "d636be7e43ef829af6e853da6b3c7566db9f72fe",
+  "policy_sha": "374911c4be584df24e6da57af2d990570ef0f859",
   "test_policy_sha": "843adf9e4b8f85d0c08b27b9d0b09dd094b54702",
   "test_agent_version": "2",
-  "harden_agent_version": "2"
+  "harden_agent_version": "2",
+  "dist_artifact": {
+    "gcs_uri": "gs://patch-actions-node-artifacts/dist-artifacts/mamezou-tech/setup-helmfile/v2.2.0/sha256-970aed0891449814899333205b857083b71abe47e1d2a96bfd65c00b2480e586.tar.gz",
+    "sha256": "970aed0891449814899333205b857083b71abe47e1d2a96bfd65c00b2480e586",
+    "size_bytes": 264555
+  }
 }
